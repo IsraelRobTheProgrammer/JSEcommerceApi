@@ -1,21 +1,26 @@
-const { log } = require("console");
-const { configDotenv } = require("dotenv");
 const express = require("express");
+const { configDotenv } = require("dotenv");
 const { default: mongoose } = require("mongoose");
-const userRouter = require("./routes/user");
 const morgan = require("morgan");
-const app = express();
 
+const userRouter = require("./routes/user");
+const authRouter = require("./routes/auth");
+
+const app = express();
 configDotenv();
+
+// middlewares
 app.use(morgan("dev"));
 app.use(express.json());
+
 mongoose
   .connect(process.env.MONGO_URL)
-  .then(() => log("DB connection good"))
-  .catch((err) => log(err, "error"));
+  .then(() => console.log("DB connection good"))
+  .catch((err) => console.log(err, "error"));
 
 app.use("/api/users", userRouter);
+app.use("/api/auth", authRouter);
 
 app.listen(process.env.PORT || 5000, () => {
-  log("Backend server is running");
+  console.log("Backend server is running");
 });
