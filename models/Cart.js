@@ -3,15 +3,18 @@ const schema = mongoose.Schema;
 
 const CartSchema = new schema(
   {
-    title: { type: String, required: true, unique },
-    desc: { type: String, required: true },
-    img: { type: String, required: true },
-    categories: { type: Array },
-    size: { type: String },
-    color: { type: String },
-    price: { type: Number, required: true },
-
-    isAdmin: { type: Boolean, default: false },
+    userId: { type: String, required: true },
+    products: [
+      {
+        productId: {
+          type: String,
+        },
+        quantity: {
+          type: Number,
+          default: 1,
+        },
+      },
+    ],
   },
   { timestamps: true }
 );

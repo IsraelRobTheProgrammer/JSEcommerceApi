@@ -10,8 +10,6 @@ const ProductSchema = new schema(
     size: { type: String },
     color: { type: String },
     price: { type: Number, required: true },
-
-    isAdmin: { type: Boolean, default: false },
   },
   { timestamps: true }
 );
