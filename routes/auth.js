@@ -16,12 +16,18 @@ router.post("/register", async (req, res) => {
 
     const savedUser = await newUser.save();
     console.log(savedUser);
+
+    const accessToken = savedUser.createJWT()
     res.status(201).json({
+      success: true,
+      message: "Account created successfully",
       _id: savedUser._id,
       username: savedUser.username,
       email: savedUser.email,
       isAdmin: savedUser.isAdmin,
+      accessToken
     });
+
   } catch (error) {
     console.log(error, "sorry an error occured");
     res.status(500).json(error);
@@ -43,8 +49,15 @@ router.post("/login", async (req, res) => {
     const pwd = hashPwd.toString(crypto.enc.Utf8);
     pwd !== password && res.status(401).json("Wrong Credentials");
 
+    const accessToken = foundUser.createJWT();
+
     foundUser.password = undefined;
-    res.status(200).json(foundUser);
+    res.status(200).json({
+      success: true,
+      message: "Login successfully",
+      foundUser,
+      accessToken,
+    });
   } catch (error) {
     res.status(500).json(error);
   }
