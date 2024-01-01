@@ -1,29 +1,26 @@
-const { checkAllPermission } = require("../middlewares/authMiddleware");
-const crypto = require("crypto-js");
-const User = require("../models/User");
+const {
+  updateUser,
+  deleteUser,
+  getUser,
+  getAllUser,
+  getUserStats,
+} = require("../controllers/userController");
+
+const {
+  checkAllPermission,
+  checkAdminPermission,
+} = require("../middlewares/authMiddleware");
 
 const router = require("express").Router();
 
-router.put("/:id", checkAllPermission, async (req, res) => {
-  if (req.body.password) {
-    req.body.password = crypto.AES.encrypt(
-      req.body.password,
-      process.env.SECRET_KEY
-    ).toString();
-  }
-  try {
-    const updatedUser = await User.findByIdAndUpdate(
-      req.params.id,
-      {
-        $set: req.body,
-      },
-      { new: true }
-    );
+router.put("/:id", checkAllPermission, updateUser);
 
-    res.status(200).json(updatedUser);
-  } catch (error) {
-    res.status(500).send(error);
-  }
-});
+router.delete("/:id", checkAllPermission, deleteUser);
+
+router.get("/find/:id", checkAdminPermission, getUser);
+
+router.get("/", checkAdminPermission, getAllUser);
+
+router.get("/stats", checkAdminPermission, getUserStats);
 
 module.exports = router;

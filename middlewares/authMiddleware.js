@@ -4,26 +4,23 @@ const userAuth = async (req, res, next) => {
   const authHeader = req?.headers?.authorization;
 
   if (!authHeader || !authHeader?.startsWith("Bearer")) {
-    console.log("auth 1");
-    next("Authentication failed");
+    // next("Authentication failed");
   }
 
   const token = authHeader?.split(" ")[1];
 
   try {
     const userToken = JWT.verify(token, process.env.JWT_SECRET_KEY);
-    console.log("auth 2");
 
     req.user = {
       userId: userToken.userId,
-      userType: userToken.isAdmin,
+      userType: userToken.userType,
     };
 
     next();
   } catch (error) {
-    console.log("auth 3");
-    console.log(error);
-    next("Authentication failed");
+    res.status(401).json({ error: error.name, message: error.message });
+    // next("Authentication failed");
   }
 };
 
@@ -39,6 +36,7 @@ const checkAllPermission = (req, res, next) => {
 
 const checkAdminPermission = (req, res, next) => {
   userAuth(req, res, () => {
+    console.log(req.user);
     if (req.user.userType) {
       next();
     } else {
